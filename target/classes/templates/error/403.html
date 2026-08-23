@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>CityFix - Access Denied</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(160deg, #f7f9fb 0%, #eef2ff 55%, #fdeceb 100%);
+            background-size: 200% 200%;
+            animation: bgShift 12s ease infinite;
+            color: #191c1e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* floating ambient dots */
+        .bg-dot {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(186, 26, 26, 0.08);
+            animation: floatDot 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .bg-dot:nth-child(1) { width: 60px; height: 60px; top: 12%; left: 8%; animation-delay: 0s; }
+        .bg-dot:nth-child(2) { width: 30px; height: 30px; top: 70%; left: 12%; animation-delay: 1.5s; background: rgba(0,108,73,0.08); }
+        .bg-dot:nth-child(3) { width: 45px; height: 45px; top: 20%; right: 10%; animation-delay: 3s; background: rgba(0,40,142,0.07); }
+        .bg-dot:nth-child(4) { width: 24px; height: 24px; bottom: 14%; right: 16%; animation-delay: 2s; }
+
+        @keyframes floatDot {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-22px) translateX(10px); }
+        }
+
+        .card {
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 32px;
+            opacity: 0;
+            animation: fadeDown .6s ease forwards;
+        }
+        .brand img { height: 32px; width: auto; }
+        .brand span {
+            font-weight: 700;
+            font-size: 20px;
+            color: #00288e;
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .illustration-box {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            padding: 32px 24px 28px;
+            margin-bottom: 28px;
+            opacity: 0;
+            transform: translateY(18px);
+            animation: cardIn .6s ease .15s forwards;
+        }
+
+        @keyframes cardIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-text {
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            color: #191c1e;
+            margin-bottom: 4px;
+        }
+        .code-text span {
+            color: #ba1a1a;
+            display: inline-block;
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+
+        svg.scene { width: 100%; max-width: 340px; height: auto; margin: 8px auto 12px; display: block; }
+
+        /* character gentle idle bob */
+        #char-group {
+            animation: bob 3s ease-in-out infinite;
+            transform-origin: 200px 214px;
+        }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* boulders slight sway */
+        #boulder-left { animation: swayLeft 4s ease-in-out infinite; transform-origin: 70px 235px; }
+        #boulder-right { animation: swayRight 4.4s ease-in-out infinite; transform-origin: 330px 234px; }
+        @keyframes swayLeft {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-1.5deg); }
+        }
+        @keyframes swayRight {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(1.5deg); }
+        }
+
+        /* rope tension wobble */
+        .rope { animation: ropeWobble 3s ease-in-out infinite; }
+        @keyframes ropeWobble {
+            0%, 100% { stroke-width: 3; }
+            50% { stroke-width: 3.6; }
+        }
+
+        /* lock badge: shake + glow */
+        #lock-badge {
+            animation: lockFloat 2.6s ease-in-out infinite;
+            transform-origin: 200px 66px;
+        }
+        @keyframes lockFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-3px) rotate(-3deg); }
+            75% { transform: translateY(-3px) rotate(3deg); }
+        }
+        #lock-glow {
+            animation: glowPulse 2.6s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.35; r: 26; }
+            50% { opacity: 0.6; r: 30; }
+        }
+
+        .lost-text {
+            font-weight: 700;
+            font-size: 20px;
+            color: #191c1e;
+            margin-top: 6px;
+            opacity: 0;
+            animation: fadeUp .5s ease .5s forwards;
+        }
+        .sub-text {
+            font-size: 14px;
+            color: #444653;
+            margin-top: 6px;
+            line-height: 1.5;
+            opacity: 0;
+            animation: fadeUp .5s ease .65s forwards;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 22px;
+            flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeUp .5s ease .8s forwards;
+        }
+        .btn {
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: opacity .15s ease, transform .1s ease, box-shadow .2s ease;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary {
+            background: #006c49;
+            color: #ffffff;
+        }
+        .btn-primary:hover { opacity: 0.92; box-shadow: 0 6px 16px rgba(0,108,73,0.3); transform: translateY(-1px); }
+        .btn-outline {
+            background: transparent;
+            color: #191c1e;
+            border: 1px solid #c4c5d5;
+        }
+        .btn-outline:hover { background: #eceef0; transform: translateY(-1px); }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.55);
+            transform: scale(0);
+            animation: rippleAnim .55s ease-out;
+            pointer-events: none;
+        }
+        @keyframes rippleAnim {
+            to { transform: scale(3); opacity: 0; }
+        }
+
+        .footnote {
+            margin-top: 22px;
+            font-size: 12px;
+            color: #757684;
+            opacity: 0;
+            animation: fadeUp .5s ease .95s forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-dot"></div>
+<div class="bg-dot"></div>
+<div class="bg-dot"></div>
+<div class="bg-dot"></div>
+
+<div class="card">
+    <div class="brand">
+        <img alt="CityFix Logo" th:src="@{/screen.png}" src="/screen.png">
+        <span>CityFix</span>
+    </div>
+
+    <div class="illustration-box">
+        <div class="code-text">4<span>0</span>3</div>
+
+        <svg class="scene" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg" id="scene-svg">
+            <defs>
+                <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ffddc2"/>
+                    <stop offset="100%" stop-color="#f7c19c"/>
+                </linearGradient>
+                <linearGradient id="tunicGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#f0a04b"/>
+                    <stop offset="100%" stop-color="#d9822f"/>
+                </linearGradient>
+                <linearGradient id="boulderGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#eceef4"/>
+                    <stop offset="100%" stop-color="#d3d7e6"/>
+                </linearGradient>
+                <linearGradient id="beardGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#5a3521"/>
+                    <stop offset="100%" stop-color="#3d2314"/>
+                </linearGradient>
+                <radialGradient id="groundGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#e4e7ee"/>
+                    <stop offset="100%" stop-color="#eef0f5"/>
+                </radialGradient>
+            </defs>
+
+            <ellipse cx="200" cy="248" rx="175" ry="15" fill="url(#groundGrad)"/>
+
+            <path d="M35 240 q7 -16 14 0" stroke="#2e9e6f" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M49 240 q7 -21 14 0" stroke="#249163" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M340 240 q7 -16 14 0" stroke="#2e9e6f" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <path d="M354 240 q7 -21 14 0" stroke="#249163" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+            <g id="boulder-left">
+                <ellipse cx="68" cy="212" rx="44" ry="32" fill="url(#boulderGrad)"/>
+                <ellipse cx="68" cy="212" rx="44" ry="32" fill="none" stroke="#c1c6db" stroke-width="1.5"/>
+                <path d="M40 200 q28 -14 56 2" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+            </g>
+
+            <g id="boulder-right">
+                <ellipse cx="332" cy="207" rx="48" ry="36" fill="url(#boulderGrad)"/>
+                <ellipse cx="332" cy="207" rx="48" ry="36" fill="none" stroke="#c1c6db" stroke-width="1.5"/>
+                <path d="M300 194 q32 -16 64 2" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.5"/>
+            </g>
+
+            <path class="rope" d="M106 212 Q 158 244 190 208" stroke="#2d2419" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path class="rope" d="M210 208 Q 250 244 290 209" stroke="#2d2419" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+            <g id="char-group">
+                <!-- shadow -->
+                <ellipse cx="200" cy="243" rx="30" ry="6" fill="#d7dae2" opacity="0.6"/>
+
+                <!-- legs -->
+                <path d="M189 194 q-2 16 -1 26 q0 4 5 4 q4 0 4 -4 q1 -14 3 -26 z" fill="#5a3521"/>
+                <path d="M211 194 q2 16 1 26 q0 4 -5 4 q-4 0 -4 -4 q-1 -14 -3 -26 z" fill="#5a3521"/>
+                <ellipse cx="193" cy="224" rx="6" ry="3.5" fill="#3d2314"/>
+                <ellipse cx="207" cy="224" rx="6" ry="3.5" fill="#3d2314"/>
+
+                <!-- tunic -->
+                <path d="M178 152 q22 -12 44 0 l7 44 q-29 11 -58 0 z" fill="url(#tunicGrad)"/>
+                <path d="M178 152 q22 -12 44 0 l2 12 q-24 -10 -48 0 z" fill="#b96f22"/>
+                <path d="M191 156 l3 38 M209 156 l-3 38" stroke="#c47420" stroke-width="1.4" opacity="0.5"/>
+                <!-- belt -->
+                <rect x="182" y="182" width="36" height="5" rx="2" fill="#6b3a17"/>
+
+                <!-- arms holding rope -->
+                <path d="M180 160 q-16 4 -22 12 q-2 3 1 5 q3 2 5 -1 q7 -8 19 -10 z" fill="url(#skinGrad)"/>
+                <path d="M220 160 q16 4 22 12 q2 3 -1 5 q-3 2 -5 -1 q-7 -8 -19 -10 z" fill="url(#skinGrad)"/>
+
+                <!-- neck -->
+                <rect x="193" y="146" width="14" height="10" rx="4" fill="#f0b88f"/>
+
+                <!-- ears -->
+                <ellipse cx="180" cy="134" rx="4.5" ry="6" fill="url(#skinGrad)"/>
+                <ellipse cx="220" cy="134" rx="4.5" ry="6" fill="url(#skinGrad)"/>
+
+                <!-- head -->
+                <circle cx="200" cy="130" r="22" fill="url(#skinGrad)"/>
+
+                <!-- beard base -->
+                <path d="M179 134 q-2 24 21 27 q23 -3 21 -27 q-3 13 -21 15 q-18 -2 -21 -15 z" fill="url(#beardGrad)"/>
+                <path d="M181 132 q19 22 38 0 q3 18 -19 21 q-22 -3 -19 -21 z" fill="#4a2c1a"/>
+
+                <!-- mustache -->
+                <path d="M188 137 q12 7 24 0 q-2 6 -12 6.5 q-10 -0.5 -12 -6.5 z" fill="#3d2314"/>
+
+                <!-- mouth hint -->
+                <path d="M195 148 q5 3 10 0" stroke="#2a1710" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+                <!-- nose -->
+                <path d="M198 120 q3.5 7 0.5 10.5 q-2.5 1.5 -4.5 -0.5" stroke="#dd9b78" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+                <!-- eyebrows -->
+                <path d="M187 115 q5 -3.5 10 -1" stroke="#2a1710" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+                <path d="M203 114 q5 -2.5 10 1" stroke="#2a1710" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+
+                <!-- eyes -->
+                <ellipse cx="192" cy="122" rx="2.6" ry="3" fill="#ffffff"/>
+                <ellipse cx="208" cy="122" rx="2.6" ry="3" fill="#ffffff"/>
+                <circle cx="192.5" cy="122.5" r="1.7" fill="#2a1710"/>
+                <circle cx="208.5" cy="122.5" r="1.7" fill="#2a1710"/>
+                <circle cx="193.1" cy="121.7" r="0.5" fill="#ffffff"/>
+                <circle cx="209.1" cy="121.7" r="0.5" fill="#ffffff"/>
+
+                <!-- brow shadow -->
+                <path d="M186 117 q6 3 12 1.5" stroke="#dd9b78" stroke-width="1" fill="none" opacity="0.4"/>
+
+                <!-- hair -->
+                <path d="M179 126 q-4 -26 21 -28 q25 2 21 28 q-3 -15 -21 -15 q-18 0 -21 15 z" fill="#4a2c1a"/>
+                <path d="M180 122 q0 -8 4 -12" stroke="#5a3521" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+                <path d="M220 122 q0 -8 -4 -12" stroke="#5a3521" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            </g>
+
+            <g id="lock-badge" transform="translate(200,66)">
+                <circle id="lock-glow" cx="0" cy="0" r="27" fill="#ba1a1a" opacity="0.3"/>
+                <circle cx="0" cy="0" r="21" fill="#ffdad6"/>
+                <circle cx="0" cy="0" r="21" fill="none" stroke="#ffb4ab" stroke-width="1.5"/>
+                <rect x="-8.5" y="-2" width="17" height="13" rx="3" fill="#ba1a1a"/>
+                <circle cx="0" cy="4.5" r="1.6" fill="#ffdad6"/>
+                <path d="M-5.5 -2 v-4.5 a5.5 5.5 0 0 1 11 0 v4.5" stroke="#ba1a1a" stroke-width="2.8" fill="none"/>
+            </g>
+        </svg>
+
+        <p class="lost-text">Looks like you're not allowed here</p>
+        <p class="sub-text">You don't have permission to access this page.<br>
+            Please contact an administrator if you think this is a mistake.</p>
+
+        <div class="btn-row">
+            <a href="/" class="btn btn-primary" data-ripple>Go to Home</a>
+            <a href="/logout" class="btn btn-outline" data-ripple>Switch Account</a>
+        </div>
+    </div>
+
+    <p class="footnote">Error 403 &middot; CityFix Access Control</p>
+</div>
+
+<script>
+    document.querySelectorAll('[data-ripple]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            var rect = btn.getBoundingClientRect();
+            var ripple = document.createElement('span');
+            var size = Math.max(rect.width, rect.height);
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            btn.appendChild(ripple);
+            setTimeout(function () { ripple.remove(); }, 550);
+        });
+    });
+</script>
+
+</body>
+</html>
